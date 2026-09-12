@@ -14,6 +14,7 @@
   width: 0%;
   background: linear-gradient(90deg, #C9A45B, #E0B86A);
   border-radius: 0 3px 3px 0;
+  transition: width 0.15s linear;
 }
 
 /* ============================================
@@ -55,6 +56,24 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
+.loader-logo-img {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+  margin-bottom: 30px;
+  opacity: 0;
+  transform: translateY(30px) scale(0.9);
+  animation: logoRevealImg 0.9s cubic-bezier(0.2, 0.8, 0.1, 1) 0.1s forwards;
+  filter: drop-shadow(0 0 30px rgba(201, 164, 91, 0.4));
+}
+
+@keyframes logoRevealImg {
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
 .loader-counter {
   font-family: 'DM Mono', monospace;
   font-size: 14px;
@@ -85,13 +104,103 @@
 }
 
 /* ============================================
-   SCROLL REVEAL
+   CUSTOM CURSOR — ENHANCED
+============================================ */
+@media (pointer: fine) {
+  * { cursor: none !important; }
+}
+
+.cursor-dot {
+  position: fixed;
+  top: 0; left: 0;
+  width: 6px;
+  height: 6px;
+  background: #C9A45B;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 99999;
+  will-change: transform;
+  mix-blend-mode: difference;
+}
+
+.cursor-ring {
+  position: fixed;
+  top: 0; left: 0;
+  width: 36px;
+  height: 36px;
+  border: 1.5px solid rgba(201, 164, 91, 0.6);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 99998;
+  will-change: transform;
+  transition:
+    width 0.35s cubic-bezier(0.2, 0.8, 0.1, 1),
+    height 0.35s cubic-bezier(0.2, 0.8, 0.1, 1),
+    border-color 0.3s ease,
+    background 0.3s ease,
+    border-radius 0.3s ease;
+}
+
+/* Link hover mode */
+.cursor-ring[data-mode="link"] {
+  width: 60px;
+  height: 60px;
+  border-color: #C9A45B;
+  background: rgba(201, 164, 91, 0.1);
+}
+
+/* Click mode */
+.cursor-ring[data-mode="click"] {
+  width: 70px;
+  height: 70px;
+  border-color: #C9A45B;
+  background: rgba(201, 164, 91, 0.15);
+}
+
+/* View mode (program card) */
+.cursor-ring[data-mode="view"] {
+  width: 90px;
+  height: 90px;
+  background: #C9A45B;
+  border-color: #C9A45B;
+  border-radius: 50%;
+  mix-blend-mode: difference;
+}
+
+.cursor-ring[data-mode="view"]::after {
+  content: "LIHAT";
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  color: #08111C;
+  font-weight: 500;
+}
+
+/* Text input mode */
+.cursor-ring[data-mode="text"] {
+  width: 4px;
+  height: 32px;
+  border-radius: 2px;
+  background: #C9A45B;
+  border-color: #C9A45B;
+}
+
+@media (pointer: coarse) {
+  .cursor-dot, .cursor-ring { display: none !important; }
+}
+
+/* ============================================
+   SCROLL REVEAL (baseline CSS — GSAP overrides)
 ============================================ */
 .reveal-up {
   opacity: 0;
   transform: translateY(40px);
-  transition: opacity 0.9s cubic-bezier(0.2, 0.8, 0.1, 1),
-              transform 0.9s cubic-bezier(0.2, 0.8, 0.1, 1);
+  transition:
+    opacity 0.9s cubic-bezier(0.2, 0.8, 0.1, 1),
+    transform 0.9s cubic-bezier(0.2, 0.8, 0.1, 1);
 }
 
 .reveal-up.visible {
@@ -100,13 +209,25 @@
 }
 
 /* ============================================
-   TRACKER RESULT (Status)
+   TRACKER RESULT (Status Aspirasi)
 ============================================ */
 .track-card {
   padding: 30px;
   border-radius: 20px;
   background: var(--bg-light);
   border: 1px solid var(--border);
+  animation: trackIn 0.6s cubic-bezier(0.2, 0.8, 0.1, 1) forwards;
+}
+
+@keyframes trackIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .track-header {
@@ -134,10 +255,25 @@
   font-weight: 500;
 }
 
-.track-status.MASUK { color: #B8923F; background: rgba(201, 164, 91, 0.15); }
-.track-status.DIPERIKSA { color: #3B82F6; background: rgba(59, 130, 246, 0.12); }
-.track-status.SEDANG-DIURUS { color: #F97316; background: rgba(249, 115, 22, 0.12); }
-.track-status.SELESAI { color: #22C55E; background: rgba(34, 197, 94, 0.12); }
+.track-status.MASUK {
+  color: #B8923F;
+  background: rgba(201, 164, 91, 0.15);
+}
+
+.track-status.DIPERIKSA {
+  color: #3B82F6;
+  background: rgba(59, 130, 246, 0.12);
+}
+
+.track-status.SEDANG-DIURUS {
+  color: #F97316;
+  background: rgba(249, 115, 22, 0.12);
+}
+
+.track-status.SELESAI {
+  color: #22C55E;
+  background: rgba(34, 197, 94, 0.12);
+}
 
 .track-message {
   font-size: 15px;
@@ -163,7 +299,10 @@
   margin-bottom: 6px;
 }
 
-.track-meta strong { font-size: 13px; color: var(--text); }
+.track-meta strong {
+  font-size: 13px;
+  color: var(--text);
+}
 
 .track-response {
   margin-top: 20px;
@@ -171,6 +310,7 @@
   background: var(--card);
   border-left: 3px solid var(--gold);
   border-radius: 12px;
+  animation: trackIn 0.5s ease 0.2s backwards;
 }
 
 .track-response small {
@@ -182,7 +322,11 @@
   margin-bottom: 8px;
 }
 
-.track-response p { font-size: 14px; color: var(--text); line-height: 1.7; }
+.track-response p {
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.7;
+}
 
 .track-empty {
   text-align: center;
@@ -193,13 +337,37 @@
   letter-spacing: 0.1em;
 }
 
-.loader-logo-img {
-  width: 100px;
-  height: 100px;
-  object-fit: contain;
-  margin-bottom: 30px;
+/* ============================================
+   LENIS SMOOTH SCROLL (HTML/BODY)
+============================================ */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
+}
+
+/* ============================================
+   PAGE FADE-IN (saat redirect dari root)
+============================================ */
+body {
+  transition: opacity 0.5s ease;
+}
+
+body.page-loading {
   opacity: 0;
-  transform: translateY(30px) scale(0.9);
-  animation: logoReveal 0.9s cubic-bezier(0.2, 0.8, 0.1, 1) 0.1s forwards;
-  filter: drop-shadow(0 0 30px rgba(201, 164, 91, 0.4));
 }

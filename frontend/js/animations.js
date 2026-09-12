@@ -197,4 +197,211 @@
   input.addEventListener("keypress", (e) => {
     if (e.key === "Enter") btn.click();
   });
+  /* ============================================
+   ENHANCED SCROLL REVEAL (GSAP)
+============================================ */
+(function initEnhancedReveal() {
+  if (typeof gsap === "undefined" || typeof ScrollTrigger === "undefined") return;
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  // Reveal untuk section header
+  gsap.utils.toArray(".section-header").forEach((header) => {
+    gsap.from(header, {
+      scrollTrigger: {
+        trigger: header,
+        start: "top 85%",
+        end: "top 60%",
+        toggleActions: "play none none none"
+      },
+      y: 60,
+      opacity: 0,
+      duration: 1,
+      ease: "power3.out"
+    });
+  });
+
+  // Reveal untuk filter pills
+  gsap.utils.toArray(".filter-pills").forEach((pills) => {
+    gsap.from(pills, {
+      scrollTrigger: {
+        trigger: pills,
+        start: "top 90%",
+        toggleActions: "play none none none"
+      },
+      y: 30,
+      opacity: 0,
+      duration: 0.8,
+      ease: "power3.out"
+    });
+  });
+
+  // Reveal stagger untuk stat items
+  gsap.utils.toArray(".stats-grid").forEach((grid) => {
+    const items = grid.querySelectorAll(".stat-item");
+    gsap.from(items, {
+      scrollTrigger: {
+        trigger: grid,
+        start: "top 85%",
+        toggleActions: "play none none none"
+      },
+      y: 50,
+      opacity: 0,
+      duration: 0.9,
+      stagger: 0.12,
+      ease: "power3.out"
+    });
+  });
+
+  // Reveal untuk tracker box
+  const trackerBox = document.querySelector(".tracker-box");
+  if (trackerBox) {
+    gsap.from(trackerBox, {
+      scrollTrigger: {
+        trigger: trackerBox,
+        start: "top 85%",
+        toggleActions: "play none none none"
+      },
+      y: 50,
+      opacity: 0,
+      scale: 0.98,
+      duration: 1,
+      ease: "power3.out"
+    });
+  }
+
+  // Reveal untuk aspiration form
+  const aspirationLayout = document.querySelector(".aspiration-layout");
+  if (aspirationLayout) {
+    const info = aspirationLayout.querySelector(".aspiration-info");
+    const form = aspirationLayout.querySelector(".aspiration-form");
+
+    if (info) {
+      gsap.from(info, {
+        scrollTrigger: {
+          trigger: aspirationLayout,
+          start: "top 80%",
+          toggleActions: "play none none none"
+        },
+        x: -60,
+        opacity: 0,
+        duration: 1,
+        ease: "power3.out"
+      });
+    }
+
+    if (form) {
+      gsap.from(form, {
+        scrollTrigger: {
+          trigger: aspirationLayout,
+          start: "top 80%",
+          toggleActions: "play none none none"
+        },
+        x: 60,
+        opacity: 0,
+        duration: 1,
+        delay: 0.15,
+        ease: "power3.out"
+      });
+    }
+  }
+
+  // Footer title reveal
+  const footerTitle = document.querySelector(".footer-title");
+  if (footerTitle) {
+    gsap.from(footerTitle, {
+      scrollTrigger: {
+        trigger: footerTitle,
+        start: "top 90%",
+        toggleActions: "play none none none"
+      },
+      y: 80,
+      opacity: 0,
+      duration: 1.2,
+      ease: "power3.out"
+    });
+  }
+})();
+
+/* ============================================
+   HERO PARALLAX (GSAP)
+============================================ */
+(function initHeroParallaxGSAP() {
+  if (typeof gsap === "undefined" || typeof ScrollTrigger === "undefined") return;
+
+  const hero = document.querySelector(".hero");
+  const heroContent = document.querySelector(".hero-content");
+  const heroCrest = document.querySelector(".hero-crest");
+  const heroScrollHint = document.querySelector(".hero-scroll-hint");
+
+  if (!hero) return;
+
+  gsap.to(heroContent, {
+    scrollTrigger: {
+      trigger: hero,
+      start: "top top",
+      end: "bottom top",
+      scrub: 1
+    },
+    y: 150,
+    opacity: 0,
+    ease: "none"
+  });
+
+  if (heroCrest) {
+    gsap.to(heroCrest, {
+      scrollTrigger: {
+        trigger: hero,
+        start: "top top",
+        end: "bottom top",
+        scrub: 1
+      },
+      y: 100,
+      rotate: 30,
+      scale: 1.1,
+      ease: "none"
+    });
+  }
+
+  if (heroScrollHint) {
+    gsap.to(heroScrollHint, {
+      scrollTrigger: {
+        trigger: hero,
+        start: "top top",
+        end: "30% top",
+        scrub: 1
+      },
+      opacity: 0,
+      y: 30,
+      ease: "none"
+    });
+  }
+})();
+
+/* ============================================
+   MARQUEE VELOCITY EFFECT
+============================================ */
+(function initMarqueeVelocity() {
+  if (typeof gsap === "undefined" || typeof ScrollTrigger === "undefined") return;
+
+  const marqueeTrack = document.querySelector(".marquee-track");
+  if (!marqueeTrack) return;
+
+  let lastScroll = 0;
+  let velocity = 0;
+
+  ScrollTrigger.create({
+    trigger: ".marquee",
+    start: "top bottom",
+    end: "bottom top",
+    onUpdate: (self) => {
+      velocity = self.getVelocity() / 300;
+      gsap.to(marqueeTrack, {
+        duration: 0.4,
+        timeScale: 1 + Math.min(Math.abs(velocity), 4),
+        ease: "power2.out"
+      });
+    }
+  });
+})();
 })();
