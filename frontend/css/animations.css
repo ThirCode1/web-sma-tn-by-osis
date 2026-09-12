@@ -192,3 +192,14 @@
   font-size: 12px;
   letter-spacing: 0.1em;
 }
+
+.loader-logo-img {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+  margin-bottom: 30px;
+  opacity: 0;
+  transform: translateY(30px) scale(0.9);
+  animation: logoReveal 0.9s cubic-bezier(0.2, 0.8, 0.1, 1) 0.1s forwards;
+  filter: drop-shadow(0 0 30px rgba(201, 164, 91, 0.4));
+}
