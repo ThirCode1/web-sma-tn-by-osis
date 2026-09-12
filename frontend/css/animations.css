@@ -1,0 +1,194 @@
+/* ============================================
+   SCROLL PROGRESS
+============================================ */
+.scroll-progress {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  z-index: 9000;
+  background: transparent;
+}
+
+.scroll-progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #C9A45B, #E0B86A);
+  border-radius: 0 3px 3px 0;
+}
+
+/* ============================================
+   LOADER
+============================================ */
+.loader {
+  position: fixed;
+  inset: 0;
+  background: #08111C;
+  z-index: 99999;
+  display: grid;
+  place-items: center;
+  transition: opacity 0.8s ease, visibility 0.8s ease;
+}
+
+.loader.done { opacity: 0; visibility: hidden; }
+
+.loader-inner { text-align: center; }
+
+.loader-logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 80px;
+  font-weight: 900;
+  color: #C9A45B;
+  margin-bottom: 30px;
+  letter-spacing: -0.05em;
+}
+
+.loader-logo span {
+  display: inline-block;
+  opacity: 0;
+  animation: logoReveal 0.8s ease forwards;
+}
+.loader-logo span:first-child { animation-delay: 0.2s; }
+.loader-logo span:last-child { animation-delay: 0.4s; }
+
+@keyframes logoReveal {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.loader-counter {
+  font-family: 'DM Mono', monospace;
+  font-size: 14px;
+  color: white;
+  letter-spacing: 0.2em;
+  margin-bottom: 20px;
+}
+
+.loader-bar {
+  width: 200px; height: 1px;
+  background: rgba(255,255,255,0.1);
+  margin: 0 auto 20px;
+  overflow: hidden;
+}
+
+.loader-bar-fill {
+  height: 100%;
+  width: 0%;
+  background: #C9A45B;
+  transition: width 0.3s ease;
+}
+
+.loader-inner small {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: #536273;
+  letter-spacing: 0.3em;
+}
+
+/* ============================================
+   SCROLL REVEAL
+============================================ */
+.reveal-up {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.9s cubic-bezier(0.2, 0.8, 0.1, 1),
+              transform 0.9s cubic-bezier(0.2, 0.8, 0.1, 1);
+}
+
+.reveal-up.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ============================================
+   TRACKER RESULT (Status)
+============================================ */
+.track-card {
+  padding: 30px;
+  border-radius: 20px;
+  background: var(--bg-light);
+  border: 1px solid var(--border);
+}
+
+.track-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.track-id {
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  color: var(--text-2);
+  letter-spacing: 0.08em;
+}
+
+.track-status {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  padding: 6px 14px;
+  border-radius: 100px;
+  letter-spacing: 0.12em;
+  font-weight: 500;
+}
+
+.track-status.MASUK { color: #B8923F; background: rgba(201, 164, 91, 0.15); }
+.track-status.DIPERIKSA { color: #3B82F6; background: rgba(59, 130, 246, 0.12); }
+.track-status.SEDANG-DIURUS { color: #F97316; background: rgba(249, 115, 22, 0.12); }
+.track-status.SELESAI { color: #22C55E; background: rgba(34, 197, 94, 0.12); }
+
+.track-message {
+  font-size: 15px;
+  color: var(--text);
+  line-height: 1.7;
+  margin-bottom: 20px;
+}
+
+.track-meta {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+
+.track-meta small {
+  display: block;
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  color: var(--text-muted);
+  letter-spacing: 0.15em;
+  margin-bottom: 6px;
+}
+
+.track-meta strong { font-size: 13px; color: var(--text); }
+
+.track-response {
+  margin-top: 20px;
+  padding: 20px;
+  background: var(--card);
+  border-left: 3px solid var(--gold);
+  border-radius: 12px;
+}
+
+.track-response small {
+  display: block;
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  color: var(--gold);
+  letter-spacing: 0.18em;
+  margin-bottom: 8px;
+}
+
+.track-response p { font-size: 14px; color: var(--text); line-height: 1.7; }
+
+.track-empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-muted);
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+}

@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OSIS Dashboard — SMA Taruna Nusantara</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,700;0,900;1,700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+
+  <!-- ============================================
+       LOADER
+  ============================================ -->
+  <div class="admin-loader" id="adminLoader">
+    <div class="admin-loader-inner">
+      <div class="admin-loader-logo">TN</div>
+      <div class="admin-loader-bar">
+        <div class="admin-loader-fill" id="adminLoaderFill"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================
+       LOGIN SCREEN
+  ============================================ -->
+  <div class="login-screen" id="loginScreen" style="display:none;">
+
+    <!-- LEFT (DARK) -->
+    <div class="login-left">
+      <div class="login-left-content">
+        <div class="login-logo-mark anim-logo">TN</div>
+        <h1 class="login-quote">
+          <span class="anim-word">Form</span><br>
+          <span class="anim-word"><em>the</em></span><br>
+          <span class="anim-word">future.</span>
+        </h1>
+        <p class="login-tagline anim-fade-up">
+          Dashboard internal pengurus OSIS<br>
+          SMA Taruna Nusantara
+        </p>
+        <div class="login-meta anim-fade-up">
+          <span>ADMIN ACCESS</span>
+          <span>v1.0</span>
+        </div>
+      </div>
+      <div class="login-grid"></div>
+      <div class="login-glow"></div>
+    </div>
+
+    <!-- RIGHT (LIGHT) -->
+    <div class="login-right">
+      <div class="login-form-wrap">
+        <div class="login-eyebrow anim-slide-right">OSIS / ADMIN</div>
+        <h2 class="anim-slide-right">Selamat datang<br>kembali.</h2>
+        <p class="login-sub anim-slide-right">Masukkan kode akses untuk melanjutkan.</p>
+
+        <div class="login-input-wrap anim-slide-right">
+          <label for="adminCode">Kode Akses</label>
+          <input type="password" id="adminCode" placeholder="••••••••••••" autocomplete="off" />
+        </div>
+
+        <button id="loginBtn" class="btn-login anim-slide-right">
+          MASUK
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M1 8h14M9 2l6 6-6 6" stroke="currentColor" stroke-width="1.5"/>
+          </svg>
+        </button>
+
+        <p id="loginError" class="login-error"></p>
+
+        <div class="login-footer anim-fade-up">
+          <a href="../frontend/index.html">← Kembali ke Website</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ============================================
+       DASHBOARD
+  ============================================ -->
+  <div class="dashboard" id="dashboard" style="display:none;">
+
+    <!-- NAVBAR -->
+    <nav class="dash-navbar">
+      <div class="dash-nav-left">
+        <div class="logo-mark">TN</div>
+        <div class="logo-text">
+          <strong>Dashboard OSIS</strong>
+          <small>SMA Taruna Nusantara</small>
+        </div>
+      </div>
+
+      <div class="dash-nav-right">
+        <span class="dash-time" id="dashTime">--:--:--</span>
+        <button id="logoutBtn" class="btn-logout">LOGOUT</button>
+      </div>
+    </nav>
+
+    <!-- MAIN -->
+    <main class="dash-main">
+
+      <!-- HEADER -->
+      <header class="dash-header">
+        <div>
+          <div class="dash-eyebrow">SUARA NUSANTARA / OVERVIEW</div>
+          <h1>Daftar <em>Aspirasi.</em></h1>
+          <p>Kelola aspirasi yang masuk dari siswa.</p>
+        </div>
+        <button id="refreshBtn" class="btn-refresh">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M1 8a7 7 0 0 1 12-4.9M15 8a7 7 0 0 1-12 4.9M13 1v4h-4M3 15v-4h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          Refresh
+        </button>
+      </header>
+
+      <!-- STATS -->
+      <section class="stats-row">
+        <div class="stat-card" data-stat="total">
+          <div class="stat-icon">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <rect x="3" y="3" width="14" height="14" rx="3" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M7 9h6M7 13h6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="stat-info">
+            <span class="stat-label">TOTAL</span>
+            <span class="stat-value" id="statTotal">0</span>
+          </div>
+        </div>
+
+        <div class="stat-card" data-stat="baru">
+          <div class="stat-icon baru">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <circle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M10 6v4l3 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="stat-info">
+            <span class="stat-label">BARU</span>
+            <span class="stat-value" id="statBaru">0</span>
+          </div>
+        </div>
+
+        <div class="stat-card" data-stat="proses">
+          <div class="stat-icon proses">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M10 2v4M10 14v4M2 10h4M14 10h4M4.5 4.5l3 3M12.5 12.5l3 3M4.5 15.5l3-3M12.5 7.5l3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="stat-info">
+            <span class="stat-label">DIPROSES</span>
+            <span class="stat-value" id="statProses">0</span>
+          </div>
+        </div>
+
+        <div class="stat-card" data-stat="selesai">
+          <div class="stat-icon selesai">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M4 10l4 4 8-8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div class="stat-info">
+            <span class="stat-label">SELESAI</span>
+            <span class="stat-value" id="statSelesai">0</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- FILTER BAR -->
+      <section class="filter-bar">
+        <div class="filter-tabs">
+          <button class="tab-btn active" data-status="ALL">Semua</button>
+          <button class="tab-btn" data-status="MASUK">Baru</button>
+          <button class="tab-btn" data-status="DIPERIKSA">Diperiksa</button>
+          <button class="tab-btn" data-status="SEDANG DIURUS">Diproses</button>
+          <button class="tab-btn" data-status="SELESAI">Selesai</button>
+        </div>
+
+        <div class="search-wrap">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M11 11l4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          <input type="text" id="searchInput" placeholder="Cari aspirasi..." />
+        </div>
+      </section>
+
+      <!-- ASPIRATION LIST -->
+      <section class="aspiration-list">
+        <div id="aspirationContainer" class="aspiration-container">
+          <div class="loading-state">MEMUAT ASPIRASI...</div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- EDIT MODAL -->
+    <div id="editModal" class="edit-modal">
+      <div class="modal-backdrop"></div>
+
+      <div class="modal-box">
+        <button class="modal-close" id="closeModalBtn">×</button>
+
+        <div class="modal-header">
+          <div class="modal-eyebrow">UPDATE ASPIRASI</div>
+          <h3 id="modalIdDisplay">ASP-XXXX</h3>
+          <p id="modalMessageDisplay" class="modal-msg">Isi pesan aspirasi.</p>
+        </div>
+
+        <div class="modal-meta">
+          <div>
+            <small>KATEGORI</small>
+            <strong id="modalCategory">-</strong>
+          </div>
+          <div>
+            <small>KELAS</small>
+            <strong id="modalClass">-</strong>
+          </div>
+          <div>
+            <small>WAKTU</small>
+            <strong id="modalTime">-</strong>
+          </div>
+        </div>
+
+        <div class="modal-form">
+          <div class="form-row">
+            <label>Status</label>
+            <div class="status-options">
+              <button type="button" class="status-opt" data-value="MASUK">Baru</button>
+              <button type="button" class="status-opt" data-value="DIPERIKSA">Diperiksa</button>
+              <button type="button" class="status-opt" data-value="SEDANG DIURUS">Diproses</button>
+              <button type="button" class="status-opt" data-value="SELESAI">Selesai</button>
+            </div>
+            <input type="hidden" id="modalStatus" />
+          </div>
+
+          <div class="form-row">
+            <label for="modalPic">PIC (Penanggung Jawab)</label>
+            <input type="text" id="modalPic" placeholder="Contoh: Sekbid 4" />
+          </div>
+
+          <div class="form-row">
+            <label for="modalResponse">Balasan / Response</label>
+            <textarea id="modalResponse" rows="4" placeholder="Balasan untuk siswa..."></textarea>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button id="cancelModal" class="btn-cancel">BATAL</button>
+          <button id="saveModal" class="btn-save">SIMPAN PERUBAHAN</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="../frontend/js/api.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>
