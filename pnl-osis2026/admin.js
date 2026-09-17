@@ -4,7 +4,7 @@
 
 // Hash SHA-256 dari kode akses kamu
 // GANTI INI dengan hash yang kamu generate dari emn178.github.io
-const ADMIN_CODE_HASH = "P42286028d2f7116a595d204e39ea9347839884ca60cc99a3c8e6cf0d5852caea";
+const ADMIN_CODE_HASH = "ba10874a807bce5b35cd28ddf85490fd7931b922d5344f3462def8788fb2347f";
 
 const SESSION_KEY = "osis_logged_in";
 const SESSION_TIMEOUT_MS = 2 * 60 * 60 * 1000; // 2 jam
