@@ -4,13 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SMA Taruna Nusantara</title>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Playfair+Display:ital,wght@0,700;0,900;1,700&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="assets/icons/logo-tn.png">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Epilogue:wght@900&family=Playfair+Display:ital,wght@0,700;0,900;1,700&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
-      background: #08111C;
-      color: #C9A45B;
+      background: #f0f7ff;
+      color: #0a2540;
       font-family: 'DM Mono', monospace;
       min-height: 100vh;
       display: grid;
@@ -19,28 +20,28 @@
       transition: opacity 0.4s ease;
     }
 
-    /* Grid background */
+    /* Grid background biru */
     body::before {
       content: '';
       position: fixed;
       inset: 0;
       background-image:
-        linear-gradient(rgba(201,164,91,0.06) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(201,164,91,0.06) 1px, transparent 1px);
+        linear-gradient(rgba(37, 99, 235, 0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(37, 99, 235, 0.06) 1px, transparent 1px);
       background-size: 60px 60px;
       mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
       -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
       pointer-events: none;
     }
 
-    /* Glow */
+    /* Glow biru */
     body::after {
       content: '';
       position: fixed;
       top: 50%; left: 50%;
-      width: 600px; height: 600px;
+      width: 700px; height: 700px;
       transform: translate(-50%, -50%);
-      background: radial-gradient(circle, rgba(201,164,91,0.15) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(37, 99, 235, 0.15) 0%, transparent 70%);
       pointer-events: none;
       animation: glowPulse 4s ease-in-out infinite;
     }
@@ -54,17 +55,21 @@
       position: relative;
       z-index: 2;
       text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
     .logo-tn-img {
-      width: 100px;
-      height: 100px;
+      width: 200px;
+      height: 200px;
       object-fit: contain;
-      margin-bottom: 40px;
+      margin-bottom: 48px;
       opacity: 0;
-      transform: translateY(30px) scale(0.9);
-      animation: logoReveal 0.9s cubic-bezier(0.2, 0.8, 0.1, 1) 0.1s forwards;
-      filter: drop-shadow(0 0 30px rgba(201, 164, 91, 0.4));
+      transform: translateY(30px) scale(0.85);
+      animation: logoReveal 1s cubic-bezier(0.2, 0.8, 0.1, 1) 0.1s forwards;
+      filter: drop-shadow(0 25px 60px rgba(37, 99, 235, 0.4));
+      border-radius: 50%;
     }
 
     @keyframes logoReveal {
@@ -72,19 +77,19 @@
     }
 
     .loader-bar {
-      width: 200px;
-      height: 2px;
-      background: rgba(255,255,255,0.08);
-      margin: 0 auto 20px;
+      width: 240px;
+      height: 3px;
+      background: rgba(37, 99, 235, 0.15);
+      margin: 0 auto 24px;
       overflow: hidden;
-      border-radius: 2px;
+      border-radius: 3px;
     }
 
     .loader-bar-fill {
       height: 100%;
       width: 0%;
-      background: linear-gradient(90deg, #C9A45B, #E0B86A);
-      border-radius: 2px;
+      background: linear-gradient(90deg, #2563eb, #60a5fa);
+      border-radius: 3px;
       animation: loadProgress 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
     }
 
@@ -93,9 +98,9 @@
     }
 
     .redirect-text {
-      font-size: 10px;
+      font-size: 11px;
       letter-spacing: 0.3em;
-      color: rgba(255,255,255,0.4);
+      color: #4a5568;
       opacity: 0;
       animation: fadeUp 0.6s ease 0.5s forwards;
     }
@@ -126,6 +131,9 @@
     setTimeout(() => {
       document.getElementById("wrap").classList.add("fade-out");
       document.body.style.opacity = "0";
+
+      // Flag supaya frontend skip loader (biar nggak double loader)
+      sessionStorage.setItem("from_redirect", "true");
 
       setTimeout(() => {
         window.location.href = "frontend/";

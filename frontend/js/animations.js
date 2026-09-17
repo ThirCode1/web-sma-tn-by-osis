@@ -1,5 +1,5 @@
 /* ============================================
-   LOADER
+   LOADER (skip kalau dari redirect)
 ============================================ */
 (function initLoader() {
   const loader = document.getElementById("loader");
@@ -7,24 +7,38 @@
   const barEl = document.getElementById("loaderBar");
   if (!loader) return;
 
+  // Kalau datang dari redirect root → skip loader
+  if (sessionStorage.getItem("from_redirect") === "true") {
+    sessionStorage.removeItem("from_redirect");
+    loader.classList.add("done");
+    loader.style.display = "none";
+
+    document.body.style.opacity = "0";
+    document.body.style.transition = "opacity 0.4s ease";
+    requestAnimationFrame(() => {
+      document.body.style.opacity = "1";
+    });
+    return;
+  }
+
+  // First visit — tampilkan loader normal
   document.body.style.overflow = "hidden";
 
   let count = 0;
   const interval = setInterval(() => {
-    count += Math.floor(Math.random() * 8) + 3;
+    count += Math.floor(Math.random() * 12) + 5;
     if (count >= 100) {
       count = 100;
       clearInterval(interval);
       setTimeout(() => {
         loader.classList.add("done");
         document.body.style.overflow = "auto";
-      }, 400);
+      }, 200);
     }
     if (countEl) countEl.textContent = count;
     if (barEl) barEl.style.width = count + "%";
-  }, 80);
+  }, 50);
 })();
-
 
 /* ============================================
    SCROLL PROGRESS

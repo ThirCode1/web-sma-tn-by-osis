@@ -1231,3 +1231,85 @@ input, textarea, select { font-family: inherit; }
 .logo-text small {
   font-size: 12px !important;
 }
+
+/* ============================================
+   LOGO LOADER ADMIN — SUPER JUMBO
+============================================ */
+
+.admin-loader-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;
+}
+
+.admin-loader .admin-loader-logo,
+img.admin-loader-logo {
+  width: 220px !important;
+  height: 220px !important;
+  max-width: 220px !important;
+  max-height: 220px !important;
+  object-fit: contain !important;
+  margin-bottom: 0 !important;
+  border-radius: 50%;
+  filter: drop-shadow(0 30px 80px rgba(37, 99, 235, 0.45));
+  animation: loaderLogoBig 1s cubic-bezier(0.2, 0.8, 0.1, 1) forwards;
+}
+
+@keyframes loaderLogoBig {
+  from {
+    opacity: 0;
+    transform: translateY(40px) scale(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Progress bar juga gedein */
+.admin-loader-bar {
+  width: 260px !important;
+  height: 3px !important;
+  background: rgba(37, 99, 235, 0.15) !important;
+  border-radius: 3px !important;
+}
+
+.admin-loader-fill {
+  height: 100% !important;
+  background: linear-gradient(90deg, #2563eb, #60a5fa) !important;
+  border-radius: 3px !important;
+}
+
+/* Login screen logo juga gedein */
+.login-logo-img {
+  width: 180px !important;
+  height: 180px !important;
+  max-width: 180px !important;
+  max-height: 180px !important;
+  object-fit: contain !important;
+  margin-bottom: 56px !important;
+  border-radius: 50%;
+  filter: drop-shadow(0 25px 60px rgba(0, 0, 0, 0.3));
+}
+
+/* Navbar admin logo */
+.dash-navbar .logo-mark-img {
+  width: 68px !important;
+  height: 68px !important;
+  max-width: 68px !important;
+  max-height: 68px !important;
+  object-fit: contain !important;
+}
+
+.dash-nav-left {
+  gap: 16px !important;
+}
+
+.dash-nav-left .logo-text strong {
+  font-size: 17px !important;
+}
+
+.dash-nav-left .logo-text small {
+  font-size: 12px !important;
+}
