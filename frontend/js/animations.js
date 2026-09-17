@@ -1,4 +1,6 @@
-/* LOADER */
+/* ============================================
+   LOADER
+============================================ */
 (function initLoader() {
   const loader = document.getElementById("loader");
   const countEl = document.getElementById("loaderCount");
@@ -24,7 +26,9 @@
 })();
 
 
-/* SCROLL PROGRESS */
+/* ============================================
+   SCROLL PROGRESS
+============================================ */
 (function initScrollProgress() {
   const fill = document.getElementById("scrollProgress");
   if (!fill) return;
@@ -38,7 +42,9 @@
 })();
 
 
-/* NAVBAR SCROLL */
+/* ============================================
+   NAVBAR SCROLL
+============================================ */
 (function initNavbar() {
   const navbar = document.getElementById("navbar");
   if (!navbar) return;
@@ -50,7 +56,9 @@
 })();
 
 
-/* LIVE CLOCK */
+/* ============================================
+   LIVE CLOCK
+============================================ */
 (function initClock() {
   const el = document.getElementById("navTime");
   if (!el) return;
@@ -67,7 +75,9 @@
 })();
 
 
-/* SCROLL REVEAL */
+/* ============================================
+   SCROLL REVEAL (Native)
+============================================ */
 (function initReveal() {
   const els = document.querySelectorAll(".reveal-up");
   if (!els.length) return;
@@ -85,7 +95,9 @@
 })();
 
 
-/* COUNT-UP */
+/* ============================================
+   COUNT-UP
+============================================ */
 (function initCountUp() {
   const numbers = document.querySelectorAll(".stat-number[data-count]");
   if (!numbers.length) return;
@@ -116,7 +128,9 @@
 })();
 
 
-/* PARALLAX HERO */
+/* ============================================
+   PARALLAX HERO (Native)
+============================================ */
 (function initParallax() {
   const crest = document.querySelector(".hero-crest");
   const title = document.querySelector(".hero-title");
@@ -132,7 +146,9 @@
 })();
 
 
-/* STATUS TRACKER */
+/* ============================================
+   STATUS TRACKER
+============================================ */
 (function initTracker() {
   const btn = document.getElementById("trackBtn");
   const input = document.getElementById("trackIdInput");
@@ -167,22 +183,10 @@
         </div>
         <p class="track-message">${data.MESSAGE}</p>
         <div class="track-meta">
-          <div>
-            <small>KATEGORI</small>
-            <strong>${data.CATEGORY || "-"}</strong>
-          </div>
-          <div>
-            <small>KELAS</small>
-            <strong>${data.CLASS || "-"}</strong>
-          </div>
-          <div>
-            <small>WAKTU</small>
-            <strong>${data.TIME || "-"}</strong>
-          </div>
-          <div>
-            <small>PIC</small>
-            <strong>${data.PIC || "Belum ditentukan"}</strong>
-          </div>
+          <div><small>KATEGORI</small><strong>${data.CATEGORY || "-"}</strong></div>
+          <div><small>KELAS</small><strong>${data.CLASS || "-"}</strong></div>
+          <div><small>WAKTU</small><strong>${data.TIME || "-"}</strong></div>
+          <div><small>PIC</small><strong>${data.PIC || "Belum ditentukan"}</strong></div>
         </div>
         ${data.RESPONSE ? `
           <div class="track-response">
@@ -197,7 +201,10 @@
   input.addEventListener("keypress", (e) => {
     if (e.key === "Enter") btn.click();
   });
-  /* ============================================
+})();
+
+
+/* ============================================
    ENHANCED SCROLL REVEAL (GSAP)
 ============================================ */
 (function initEnhancedReveal() {
@@ -205,13 +212,11 @@
 
   gsap.registerPlugin(ScrollTrigger);
 
-  // Reveal untuk section header
   gsap.utils.toArray(".section-header").forEach((header) => {
     gsap.from(header, {
       scrollTrigger: {
         trigger: header,
         start: "top 85%",
-        end: "top 60%",
         toggleActions: "play none none none"
       },
       y: 60,
@@ -221,7 +226,6 @@
     });
   });
 
-  // Reveal untuk filter pills
   gsap.utils.toArray(".filter-pills").forEach((pills) => {
     gsap.from(pills, {
       scrollTrigger: {
@@ -236,7 +240,6 @@
     });
   });
 
-  // Reveal stagger untuk stat items
   gsap.utils.toArray(".stats-grid").forEach((grid) => {
     const items = grid.querySelectorAll(".stat-item");
     gsap.from(items, {
@@ -253,7 +256,6 @@
     });
   });
 
-  // Reveal untuk tracker box
   const trackerBox = document.querySelector(".tracker-box");
   if (trackerBox) {
     gsap.from(trackerBox, {
@@ -270,7 +272,6 @@
     });
   }
 
-  // Reveal untuk aspiration form
   const aspirationLayout = document.querySelector(".aspiration-layout");
   if (aspirationLayout) {
     const info = aspirationLayout.querySelector(".aspiration-info");
@@ -306,7 +307,6 @@
     }
   }
 
-  // Footer title reveal
   const footerTitle = document.querySelector(".footer-title");
   if (footerTitle) {
     gsap.from(footerTitle, {
@@ -323,6 +323,7 @@
   }
 })();
 
+
 /* ============================================
    HERO PARALLAX (GSAP)
 ============================================ */
@@ -336,17 +337,19 @@
 
   if (!hero) return;
 
-  gsap.to(heroContent, {
-    scrollTrigger: {
-      trigger: hero,
-      start: "top top",
-      end: "bottom top",
-      scrub: 1
-    },
-    y: 150,
-    opacity: 0,
-    ease: "none"
-  });
+  if (heroContent) {
+    gsap.to(heroContent, {
+      scrollTrigger: {
+        trigger: hero,
+        start: "top top",
+        end: "bottom top",
+        scrub: 1
+      },
+      y: 150,
+      opacity: 0,
+      ease: "none"
+    });
+  }
 
   if (heroCrest) {
     gsap.to(heroCrest, {
@@ -378,30 +381,27 @@
   }
 })();
 
+
 /* ============================================
-   MARQUEE VELOCITY EFFECT
+   MARQUEE VELOCITY (via animationDuration)
 ============================================ */
 (function initMarqueeVelocity() {
-  if (typeof gsap === "undefined" || typeof ScrollTrigger === "undefined") return;
+  if (typeof ScrollTrigger === "undefined") return;
 
   const marqueeTrack = document.querySelector(".marquee-track");
   if (!marqueeTrack) return;
 
-  let lastScroll = 0;
-  let velocity = 0;
+  let currentSpeed = 1;
 
   ScrollTrigger.create({
     trigger: ".marquee",
     start: "top bottom",
     end: "bottom top",
     onUpdate: (self) => {
-      velocity = self.getVelocity() / 300;
-      gsap.to(marqueeTrack, {
-        duration: 0.4,
-        timeScale: 1 + Math.min(Math.abs(velocity), 4),
-        ease: "power2.out"
-      });
+      const velocity = Math.min(Math.abs(self.getVelocity()) / 800, 3);
+      const targetSpeed = 1 + velocity;
+      currentSpeed += (targetSpeed - currentSpeed) * 0.15;
+      marqueeTrack.style.animationDuration = (40 / currentSpeed) + "s";
     }
   });
-})();
 })();

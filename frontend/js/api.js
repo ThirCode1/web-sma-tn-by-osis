@@ -4,14 +4,43 @@
 const API_URL =
   "https://script.google.com/macros/s/AKfycbz8F0avGv_Os_4X1B0naxm_NGmOLXogQv7IDTBR4pnNreB_DaU0PE93T_APfkjQ79oDGg/exec";
 
+const API_TIMEOUT_MS = 15000;
+
 
 /* ============================================
-   HELPER: Fetch wrapper
+   CACHE (in-memory)
+============================================ */
+let _aspirationsCache = null;
+let _aspirationsCacheTime = 0;
+const CACHE_TTL_MS = 60 * 1000; // 1 menit
+
+
+/* ============================================
+   HELPER: Fetch wrapper with timeout
 ============================================ */
 async function apiFetch(params) {
   const queryString = new URLSearchParams(params).toString();
-  const response = await fetch(`${API_URL}?${queryString}`);
-  return response.json();
+  const url = `${API_URL}?${queryString}`;
+
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), API_TIMEOUT_MS);
+
+  try {
+    const response = await fetch(url, { signal: controller.signal });
+    clearTimeout(timeoutId);
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    clearTimeout(timeoutId);
+    if (error.name === "AbortError") {
+      throw new Error("Request timeout — cek koneksi internet.");
+    }
+    throw error;
+  }
 }
 
 
@@ -26,10 +55,10 @@ async function getPrograms() {
       throw new Error(result.message || "API gagal");
     }
 
-    return result.data;
+    return result.data || [];
 
   } catch (error) {
-    console.error("Gagal mengambil data programs:", error);
+    console.error("[api] getPrograms error:", error);
     return [];
   }
 }
@@ -46,19 +75,30 @@ async function getNews() {
       throw new Error(result.message || "API gagal");
     }
 
-    return result.data;
+    return result.data || [];
 
   } catch (error) {
-    console.error("Gagal mengambil data news:", error);
+    console.error("[api] getNews error:", error);
     return [];
   }
 }
 
 
 /* ============================================
-   GET ASPIRATIONS (Untuk Dashboard OSIS)
+   GET ASPIRATIONS (dengan cache)
 ============================================ */
-async function getAspirations() {
+async function getAspirations(forceRefresh = false) {
+  const now = Date.now();
+
+  // Return dari cache jika masih fresh
+  if (
+    !forceRefresh &&
+    _aspirationsCache &&
+    now - _aspirationsCacheTime < CACHE_TTL_MS
+  ) {
+    return _aspirationsCache;
+  }
+
   try {
     const result = await apiFetch({ action: "aspirations" });
 
@@ -66,33 +106,52 @@ async function getAspirations() {
       throw new Error(result.message || "API gagal");
     }
 
-    return result.data;
+    _aspirationsCache = result.data || [];
+    _aspirationsCacheTime = now;
+
+    return _aspirationsCache;
 
   } catch (error) {
-    console.error("Gagal mengambil data aspirations:", error);
+    console.error("[api] getAspirations error:", error);
+
+    // Fallback: return cache lama kalau ada
+    if (_aspirationsCache) {
+      console.warn("[api] Menggunakan cache lama karena request gagal.");
+      return _aspirationsCache;
+    }
+
     return [];
   }
 }
 
 
 /* ============================================
-   GET ASPIRATION BY ID (Untuk Status Tracker)
+   INVALIDATE CACHE
+   (panggil setelah update/create)
+============================================ */
+function invalidateAspirationsCache() {
+  _aspirationsCache = null;
+  _aspirationsCacheTime = 0;
+}
+
+
+/* ============================================
+   GET ASPIRATION BY ID
 ============================================ */
 async function getAspirationById(id) {
   try {
     const all = await getAspirations();
-    const found = all.find(a => a.ID === id);
-    return found || null;
+    return all.find(a => a.ID === id) || null;
 
   } catch (error) {
-    console.error("Gagal mencari aspirasi:", error);
+    console.error("[api] getAspirationById error:", error);
     return null;
   }
 }
 
 
 /* ============================================
-   POST ASPIRATION (Suara Nusantara)
+   POST ASPIRATION
 ============================================ */
 async function postAspiration(payload) {
   try {
@@ -107,6 +166,9 @@ async function postAspiration(payload) {
       throw new Error(result.message || "Gagal mengirim aspirasi");
     }
 
+    // Invalidasi cache karena ada data baru
+    invalidateAspirationsCache();
+
     return {
       success: true,
       message: "Aspirasi berhasil dikirim!",
@@ -114,17 +176,17 @@ async function postAspiration(payload) {
     };
 
   } catch (error) {
-    console.error("POST ASPIRATION ERROR:", error);
+    console.error("[api] postAspiration error:", error);
     return {
       success: false,
-      message: "Gagal terhubung ke server: " + error.message
+      message: "Gagal mengirim: " + error.message
     };
   }
 }
 
 
 /* ============================================
-   UPDATE ASPIRATION (Untuk Dashboard OSIS)
+   UPDATE ASPIRATION
 ============================================ */
 async function updateAspiration(payload) {
   try {
@@ -140,10 +202,13 @@ async function updateAspiration(payload) {
       throw new Error(result.message || "Gagal update aspirasi");
     }
 
+    // Invalidasi cache karena data berubah
+    invalidateAspirationsCache();
+
     return { success: true };
 
   } catch (error) {
-    console.error("UPDATE ASPIRATION ERROR:", error);
+    console.error("[api] updateAspiration error:", error);
     return {
       success: false,
       message: "Gagal update: " + error.message

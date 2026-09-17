@@ -4,7 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SMA Taruna Nusantara — Portal Siswa</title>
-<link rel="icon" type="image/png" href="../assests/icons/logo-tn.png">
+  <link rel="icon" type="image/png" href="../assets/icons/logo-tn.png">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,700;0,900;1,700&display=swap" rel="stylesheet">
@@ -12,20 +13,22 @@
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/animations.css">
 
-  <!-- Lenis Smooth Scroll -->
-<link rel="stylesheet" href="https://unpkg.com/lenis@1.0.42/dist/lenis.css">
+  <!-- Lenis CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/lenis@1.0.42/dist/lenis.css">
 
-<!-- GSAP + ScrollTrigger -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <!-- Lenis JS (HARUS di atas GSAP) -->
+  <script src="https://unpkg.com/lenis@1.0.42/dist/lenis.min.js"></script>
 
+  <!-- GSAP + ScrollTrigger -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 </head>
 <body>
 
   <!-- LOADER -->
   <div class="loader" id="loader">
     <div class="loader-inner">
-      <img src="../assests/icons/logo-tn.png" alt="TN" class="loader-logo-img">
+      <img src="../assets/icons/logo-tn.png" alt="TN" class="loader-logo-img">
       <div class="loader-counter"><span id="loaderCount">0</span>%</div>
       <div class="loader-bar"><div class="loader-bar-fill" id="loaderBar"></div></div>
       <small>FORM THE FUTURE</small>
@@ -38,7 +41,7 @@
   <!-- NAVBAR -->
   <nav class="navbar" id="navbar">
     <div class="nav-logo">
-      <img src="../assests/icons/logo-tn.png" alt="Logo TN" class="logo-mark-img">
+      <img src="../assets/icons/logo-tn.png" alt="Logo TN" class="logo-mark-img">
       <div class="logo-text">
         <strong>SMA Taruna Nusantara</strong>
         <small>Portal Siswa</small>
@@ -100,7 +103,7 @@
     </div>
 
     <div class="hero-crest">
-      <img src="../assests/icons/logo-tn.png" alt="Crest TN" class="hero-crest-img">
+      <img src="../assets/icons/logo-tn.png" alt="Crest TN" class="hero-crest-img">
     </div>
 
     <div class="hero-scroll-hint">
@@ -292,17 +295,25 @@
     </div>
   </div>
 
-  <!-- SCRIPTS -->
+  <!-- ============================================
+       SCRIPTS
+       Urutan WAJIB:
+       1. api.js         (untuk fetch)
+       2. programs.js    (render program)
+       3. aspirations.js (form aspirasi)
+       4. smooth-scroll.js (Lenis init)
+       5. cursor.js      (custom cursor)
+       6. animations.js  (loader, reveal, dll — butuh GSAP)
+  ============================================ -->
   <script src="js/api.js"></script>
   <script src="js/programs.js"></script>
   <script src="js/aspirations.js"></script>
+  <script src="js/smooth-scroll.js"></script>
+  <script src="js/cursor.js"></script>
   <script src="js/animations.js"></script>
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      renderPrograms();
-    });
 
-    // Smooth fade-in saat halaman load
+  <script>
+    // Fade-in saat halaman pertama load
     (function () {
       document.body.style.opacity = "0";
       document.body.style.transition = "opacity 0.5s ease";
@@ -311,8 +322,6 @@
       }, 100);
     })();
   </script>
-  <!-- Lenis -->
-<script src="https://unpkg.com/lenis@1.0.42/dist/lenis.min.js"></script>
 
 </body>
 </html>

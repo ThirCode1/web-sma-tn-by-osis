@@ -16,6 +16,7 @@
       display: grid;
       place-items: center;
       overflow: hidden;
+      transition: opacity 0.4s ease;
     }
 
     /* Grid background */
@@ -55,25 +56,19 @@
       text-align: center;
     }
 
-    .logo-tn {
-      font-family: 'Playfair Display', serif;
-      font-size: 80px;
-      font-weight: 900;
-      font-style: italic;
-      color: #C9A45B;
-      letter-spacing: -0.05em;
-      line-height: 1;
+    .logo-tn-img {
+      width: 100px;
+      height: 100px;
+      object-fit: contain;
       margin-bottom: 40px;
       opacity: 0;
       transform: translateY(30px) scale(0.9);
       animation: logoReveal 0.9s cubic-bezier(0.2, 0.8, 0.1, 1) 0.1s forwards;
+      filter: drop-shadow(0 0 30px rgba(201, 164, 91, 0.4));
     }
 
     @keyframes logoReveal {
-      to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
+      to { opacity: 1; transform: translateY(0) scale(1); }
     }
 
     .loader-bar {
@@ -109,41 +104,18 @@
       to { opacity: 1; }
     }
 
-    /* Fade out seluruh halaman sebelum redirect */
     .fade-out {
       animation: pageFadeOut 0.4s ease forwards;
     }
 
     @keyframes pageFadeOut {
-      to {
-        opacity: 0;
-        transform: scale(0.98);
-      }
+      to { opacity: 0; transform: scale(0.98); }
     }
-
-    body {
-      transition: opacity 0.4s ease;
-    }
-
-.logo-tn-img {
-  width: 100px;
-  height: 100px;
-  object-fit: contain;
-  margin-bottom: 40px;
-  opacity: 0;
-  transform: translateY(30px) scale(0.9);
-  animation: logoReveal 0.9s cubic-bezier(0.2, 0.8, 0.1, 1) 0.1s forwards;
-  filter: drop-shadow(0 0 30px rgba(201, 164, 91, 0.4));
-}
-
-@keyframes logoReveal {
-  to { opacity: 1; transform: translateY(0) scale(1); }
-}
   </style>
 </head>
 <body>
   <div class="redirect-wrap" id="wrap">
-    <img src="../web-sma-tn-by-osis/assests/icons/logo-tn.png" alt="TN" class="logo-tn-img">
+    <img src="assets/icons/logo-tn.png" alt="TN" class="logo-tn-img">
     <div class="loader-bar">
       <div class="loader-bar-fill"></div>
     </div>
@@ -151,7 +123,6 @@
   </div>
 
   <script>
-    // Tunggu 1.4 detik biar animasi selesai, lalu fade out + redirect
     setTimeout(() => {
       document.getElementById("wrap").classList.add("fade-out");
       document.body.style.opacity = "0";
