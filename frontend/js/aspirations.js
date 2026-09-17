@@ -24,9 +24,32 @@ document.addEventListener("DOMContentLoaded", () => {
     const result = await postAspiration({ category, message, class: kelas });
 
     if (result.success) {
-      // Sembunyikan form, tampilkan receipt
-      form.style.display = "none";
-      showReceipt(result.id, category, kelas || "-", message);
+      // Fallback ID
+      let finalId = result.id;
+      if (!finalId || finalId === "undefined" || finalId === "null") {
+        const now = new Date();
+        const d = String(now.getDate()).padStart(2, "0");
+        const m = String(now.getMonth() + 1).padStart(2, "0");
+        const y = now.getFullYear();
+        const hh = String(now.getHours()).padStart(2, "0");
+        const mm = String(now.getMinutes()).padStart(2, "0");
+        const ss = String(now.getSeconds()).padStart(2, "0");
+        finalId = `ASP-${d}${m}${y}-${hh}${mm}${ss}`;
+      }
+
+      // SMOOTH TRANSITION: fade out form dulu
+      form.style.transition = "opacity 0.35s cubic-bezier(0.2, 0.8, 0.1, 1), transform 0.35s cubic-bezier(0.2, 0.8, 0.1, 1)";
+      form.style.opacity = "0";
+      form.style.transform = "translateY(-16px) scale(0.97)";
+
+      setTimeout(() => {
+        form.style.display = "none";
+        form.style.opacity = "";
+        form.style.transform = "";
+        form.style.transition = "";
+        showReceipt(finalId, category, kelas || "-", message);
+      }, 350);
+
     } else {
       feedback.textContent = result.message || "Gagal mengirim aspirasi.";
       feedback.style.color = "#e5484d";
@@ -47,6 +70,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const receipt = document.createElement("div");
     receipt.className = "receipt";
+
+    // Set initial state SEBELUM masuk DOM
+    receipt.style.opacity = "0";
+    receipt.style.transform = "translateY(24px) scale(0.96)";
+    receipt.style.transition = "opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)";
+
     receipt.innerHTML = `
       <div class="receipt-header">
         <div class="receipt-check">
@@ -112,6 +141,14 @@ document.addEventListener("DOMContentLoaded", () => {
     // Insert after form
     form.parentNode.insertBefore(receipt, form.nextSibling);
 
+    // Trigger entrance animation dengan double rAF (biar transisi jalan)
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        receipt.style.opacity = "1";
+        receipt.style.transform = "translateY(0) scale(1)";
+      });
+    });
+
     // Copy ID handler
     document.getElementById("receiptCopy").addEventListener("click", () => {
       const text = document.getElementById("receiptId").textContent;
@@ -132,14 +169,41 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     });
 
-    // Reset handler
+    // Reset handler — smooth
     document.getElementById("receiptReset").addEventListener("click", () => {
-      receipt.remove();
-      form.style.display = "";
-      form.reset();
-      submitBtn.disabled = false;
-      submitBtn.textContent = "KIRIM ASPIRASI";
-      feedback.innerHTML = "";
+      // Fade out receipt
+      receipt.style.opacity = "0";
+      receipt.style.transform = "translateY(-16px) scale(0.97)";
+
+      setTimeout(() => {
+        receipt.remove();
+
+        // Reset form state
+        form.reset();
+        submitBtn.disabled = false;
+        submitBtn.textContent = "KIRIM ASPIRASI";
+        feedback.innerHTML = "";
+
+        // Fade in form
+        form.style.display = "";
+        form.style.opacity = "0";
+        form.style.transform = "translateY(16px)";
+        form.style.transition = "opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)";
+
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            form.style.opacity = "1";
+            form.style.transform = "translateY(0)";
+          });
+        });
+
+        // Clean up inline styles setelah selesai
+        setTimeout(() => {
+          form.style.opacity = "";
+          form.style.transform = "";
+          form.style.transition = "";
+        }, 600);
+      }, 350);
     });
 
     // Track handler — auto-fill tracker input
@@ -147,7 +211,6 @@ document.addEventListener("DOMContentLoaded", () => {
       const trackInput = document.getElementById("trackIdInput");
       if (trackInput) {
         trackInput.value = id;
-        // Optional: auto trigger search
         setTimeout(() => {
           const trackBtn = document.getElementById("trackBtn");
           if (trackBtn) trackBtn.click();

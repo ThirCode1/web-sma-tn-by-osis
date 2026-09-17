@@ -1430,3 +1430,21 @@ input, textarea, select { font-family: inherit; }
   .receipt-btn-primary,
   .receipt-btn-secondary { width: 100%; min-width: 0; }
 }
+
+/* ============================================
+   RECEIPT — Smooth Transitions
+============================================ */
+.receipt {
+  padding: 40px;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 28px;
+  box-shadow: var(--shadow-sm);
+  /* Transisi akan di-override JS, tapi ini fallback */
+  will-change: opacity, transform;
+}
+
+/* Form juga smooth */
+.aspiration-form {
+  will-change: opacity, transform;
+}
