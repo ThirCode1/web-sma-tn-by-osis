@@ -1104,3 +1104,34 @@ input, textarea, select { font-family: inherit; }
   .modal-content { padding: 40px 28px; }
   .modal-info { grid-template-columns: 1fr; gap: 20px; }
 }
+
+/* ============================================
+   LOGO SIZE OVERRIDE (Besar)
+============================================ */
+
+/* Navbar logo */
+.logo-mark-img {
+  width: 56px !important;
+  height: 56px !important;
+  object-fit: contain;
+}
+
+/* Hero crest logo */
+.hero-crest-img {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 500px !important;
+  max-height: 500px !important;
+  object-fit: contain;
+  animation: crestRotate 40s linear infinite;
+  filter: drop-shadow(0 0 40px rgba(37, 99, 235, 0.3));
+}
+
+/* Logo text juga naikin dikit */
+.logo-text strong {
+  font-size: 16px !important;
+}
+
+.logo-text small {
+  font-size: 11px !important;
+}

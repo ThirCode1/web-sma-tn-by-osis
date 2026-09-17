@@ -1152,3 +1152,40 @@ input, textarea, select { font-family: inherit; }
   opacity: 0;
   animation: fadeUpSoft 0.7s cubic-bezier(0.2, 0.8, 0.1, 1) 0.7s forwards;
 }
+
+/* ============================================
+   LOGO SIZE OVERRIDE (Admin)
+============================================ */
+
+/* Admin loader */
+.admin-loader-logo {
+  width: 130px !important;
+  height: 130px !important;
+  object-fit: contain;
+  margin-bottom: 40px;
+  border-radius: 50%;
+}
+
+/* Login screen logo */
+.login-logo-img {
+  width: 120px !important;
+  height: 120px !important;
+  object-fit: contain;
+  margin-bottom: 56px;
+  border-radius: 50%;
+}
+
+/* Navbar admin logo */
+.logo-mark-img {
+  width: 56px !important;
+  height: 56px !important;
+  object-fit: contain;
+}
+
+.logo-text strong {
+  font-size: 16px !important;
+}
+
+.logo-text small {
+  font-size: 11px !important;
+}

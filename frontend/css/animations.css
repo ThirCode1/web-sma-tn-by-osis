@@ -282,3 +282,15 @@
 html.lenis, html.lenis body { height: auto; }
 .lenis.lenis-smooth { scroll-behavior: auto !important; }
 .lenis.lenis-stopped { overflow: hidden; }
+
+/* ============================================
+   LOADER LOGO BESAR
+============================================ */
+.loader-logo-img {
+  width: 140px !important;
+  height: 140px !important;
+  object-fit: contain;
+  margin-bottom: 40px;
+  border-radius: 50%;
+  filter: drop-shadow(0 20px 60px rgba(37, 99, 235, 0.35));
+}
