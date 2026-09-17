@@ -116,12 +116,41 @@ function invalidateAspirationsCache() {
 
 
 /* ============================================
-   GET ASPIRATION BY ID
+   GET ASPIRATION BY ID (fuzzy matching)
 ============================================ */
 async function getAspirationById(id) {
   try {
-    const all = await getAspirations();
-    return all.find(a => a.ID === id) || null;
+    // Force fresh data dulu
+    invalidateAspirationsCache();
+    const all = await getAspirations(true);
+
+    if (!all || !all.length) {
+      console.warn("[api] Data aspirasi kosong");
+      return null;
+    }
+
+    // Normalize input: trim + uppercase
+    const targetId = String(id).trim().toUpperCase();
+
+    // Debug log
+    console.log("[api] Mencari ID:", targetId);
+    console.log("[api] Total data:", all.length);
+    console.log("[api] Sample ID di Sheet:", all.slice(0, 3).map(a => a.ID));
+
+    // Cari dengan normalisasi
+    const found = all.find(a => {
+      const sheetId = String(a.ID || "").trim().toUpperCase();
+      return sheetId === targetId;
+    });
+
+    if (!found) {
+      console.warn("[api] ID tidak ditemukan:", targetId);
+    } else {
+      console.log("[api] Ditemukan:", found);
+    }
+
+    return found || null;
+
   } catch (error) {
     console.error("[api] getAspirationById error:", error);
     return null;

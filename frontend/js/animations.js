@@ -12,7 +12,6 @@
     sessionStorage.removeItem("from_redirect");
     loader.classList.add("done");
     loader.style.display = "none";
-
     document.body.style.opacity = "0";
     document.body.style.transition = "opacity 0.4s ease";
     requestAnimationFrame(() => {
@@ -21,7 +20,6 @@
     return;
   }
 
-  // First visit — tampilkan loader normal
   document.body.style.overflow = "hidden";
 
   let count = 0;
@@ -39,6 +37,7 @@
     if (barEl) barEl.style.width = count + "%";
   }, 50);
 })();
+
 
 /* ============================================
    SCROLL PROGRESS
@@ -143,10 +142,9 @@
 
 
 /* ============================================
-   PARALLAX HERO (Native — fallback)
+   PARALLAX HERO (Native fallback)
 ============================================ */
 (function initParallax() {
-  // Skip kalau GSAP aktif
   if (typeof gsap !== "undefined") return;
 
   const crest = document.querySelector(".hero-crest");
@@ -164,7 +162,39 @@
 
 
 /* ============================================
-   STATUS TRACKER
+   RENDER TRACK RESULT (helper)
+============================================ */
+function renderTrackResult(data) {
+  const result = document.getElementById("trackResult");
+  if (!result || !data) return;
+
+  const statusClass = (data.STATUS || "").replace(/\s/g, "-");
+  result.innerHTML = `
+    <div class="track-card">
+      <div class="track-header">
+        <span class="track-id">${data.ID}</span>
+        <span class="track-status ${statusClass}">${data.STATUS}</span>
+      </div>
+      <p class="track-message">${data.MESSAGE}</p>
+      <div class="track-meta">
+        <div><small>KATEGORI</small><strong>${data.CATEGORY || "-"}</strong></div>
+        <div><small>KELAS</small><strong>${data.CLASS || "-"}</strong></div>
+        <div><small>WAKTU</small><strong>${data.TIME || "-"}</strong></div>
+        <div><small>PIC</small><strong>${data.PIC || "Belum ditentukan"}</strong></div>
+      </div>
+      ${data.RESPONSE ? `
+        <div class="track-response">
+          <small>BALASAN OSIS</small>
+          <p>${data.RESPONSE}</p>
+        </div>
+      ` : ""}
+    </div>
+  `;
+}
+
+
+/* ============================================
+   STATUS TRACKER (dengan fuzzy match + retry)
 ============================================ */
 (function initTracker() {
   const btn = document.getElementById("trackBtn");
@@ -173,46 +203,64 @@
   if (!btn || !input || !result) return;
 
   btn.addEventListener("click", async () => {
-    const id = input.value.trim();
-    if (!id) {
+    const rawId = input.value.trim();
+    if (!rawId) {
       result.innerHTML = '<div class="track-empty">Masukkan ID aspirasi terlebih dahulu.</div>';
       return;
     }
 
     result.innerHTML = '<div class="track-empty">Mencari aspirasi...</div>';
 
-    const data = await getAspirationById(id);
+    const targetId = rawId.toUpperCase();
+    let data = null;
+
+    // Retry 3x dengan force refresh
+    for (let attempt = 0; attempt < 3; attempt++) {
+      invalidateAspirationsCache();
+      await getAspirations(true);
+      data = await getAspirationById(targetId);
+
+      if (data) break;
+
+      if (attempt < 2) {
+        result.innerHTML = `<div class="track-empty">Mencari... (${attempt + 1}/3)</div>`;
+        await new Promise(r => setTimeout(r, 1200));
+      }
+    }
+
+    // Kalau nggak ketemu, coba partial match
+    if (!data) {
+      const all = await getAspirations();
+      const partial = all.filter(a =>
+        String(a.ID || "").toUpperCase().includes(targetId)
+      );
+
+      if (partial.length === 1) {
+        data = partial[0];
+      } else if (partial.length > 1) {
+        result.innerHTML = `
+          <div class="track-empty">
+            Ada <strong>${partial.length}</strong> aspirasi dengan ID mirip.<br>
+            <small style="opacity: 0.7;">Masukkan ID yang lebih lengkap.</small>
+          </div>`;
+        return;
+      }
+    }
 
     if (!data) {
+      const all = await getAspirations();
       result.innerHTML = `
         <div class="track-empty">
-          Aspirasi dengan ID <strong>${id}</strong> tidak ditemukan.
+          Aspirasi dengan ID <strong>${rawId}</strong> tidak ditemukan.<br>
+          <small style="opacity: 0.7; font-size: 11px;">
+            Total ${all.length} aspirasi di database.<br>
+            Tunggu 1-2 menit jika baru saja dikirim.
+          </small>
         </div>`;
       return;
     }
 
-    const statusClass = (data.STATUS || "").replace(/\s/g, "-");
-    result.innerHTML = `
-      <div class="track-card">
-        <div class="track-header">
-          <span class="track-id">${data.ID}</span>
-          <span class="track-status ${statusClass}">${data.STATUS}</span>
-        </div>
-        <p class="track-message">${data.MESSAGE}</p>
-        <div class="track-meta">
-          <div><small>KATEGORI</small><strong>${data.CATEGORY || "-"}</strong></div>
-          <div><small>KELAS</small><strong>${data.CLASS || "-"}</strong></div>
-          <div><small>WAKTU</small><strong>${data.TIME || "-"}</strong></div>
-          <div><small>PIC</small><strong>${data.PIC || "Belum ditentukan"}</strong></div>
-        </div>
-        ${data.RESPONSE ? `
-          <div class="track-response">
-            <small>BALASAN OSIS</small>
-            <p>${data.RESPONSE}</p>
-          </div>
-        ` : ""}
-      </div>
-    `;
+    renderTrackResult(data);
   });
 
   input.addEventListener("keypress", (e) => {
@@ -231,111 +279,39 @@
 
   gsap.utils.toArray(".section-header").forEach((header) => {
     gsap.from(header, {
-      scrollTrigger: {
-        trigger: header,
-        start: "top 85%",
-        toggleActions: "play none none none"
-      },
-      y: 60,
-      opacity: 0,
-      duration: 1,
-      ease: "power3.out"
+      scrollTrigger: { trigger: header, start: "top 85%", toggleActions: "play none none none" },
+      y: 60, opacity: 0, duration: 1, ease: "power3.out"
     });
   });
 
   gsap.utils.toArray(".filter-pills").forEach((pills) => {
     gsap.from(pills, {
-      scrollTrigger: {
-        trigger: pills,
-        start: "top 90%",
-        toggleActions: "play none none none"
-      },
-      y: 30,
-      opacity: 0,
-      duration: 0.8,
-      ease: "power3.out"
+      scrollTrigger: { trigger: pills, start: "top 90%", toggleActions: "play none none none" },
+      y: 30, opacity: 0, duration: 0.8, ease: "power3.out"
     });
   });
 
   gsap.utils.toArray(".stats-grid").forEach((grid) => {
     const items = grid.querySelectorAll(".stat-item");
     gsap.from(items, {
-      scrollTrigger: {
-        trigger: grid,
-        start: "top 85%",
-        toggleActions: "play none none none"
-      },
-      y: 50,
-      opacity: 0,
-      duration: 0.9,
-      stagger: 0.12,
-      ease: "power3.out"
+      scrollTrigger: { trigger: grid, start: "top 85%", toggleActions: "play none none none" },
+      y: 50, opacity: 0, duration: 0.9, stagger: 0.12, ease: "power3.out"
     });
   });
 
   const trackerBox = document.querySelector(".tracker-box");
   if (trackerBox) {
     gsap.from(trackerBox, {
-      scrollTrigger: {
-        trigger: trackerBox,
-        start: "top 85%",
-        toggleActions: "play none none none"
-      },
-      y: 50,
-      opacity: 0,
-      scale: 0.98,
-      duration: 1,
-      ease: "power3.out"
+      scrollTrigger: { trigger: trackerBox, start: "top 85%", toggleActions: "play none none none" },
+      y: 50, opacity: 0, scale: 0.98, duration: 1, ease: "power3.out"
     });
-  }
-
-  const aspirationLayout = document.querySelector(".aspiration-layout");
-  if (aspirationLayout) {
-    const info = aspirationLayout.querySelector(".aspiration-info");
-    const form = aspirationLayout.querySelector(".aspiration-form");
-
-    if (info) {
-      gsap.from(info, {
-        scrollTrigger: {
-          trigger: aspirationLayout,
-          start: "top 80%",
-          toggleActions: "play none none none"
-        },
-        x: -60,
-        opacity: 0,
-        duration: 1,
-        ease: "power3.out"
-      });
-    }
-
-    if (form) {
-      gsap.from(form, {
-        scrollTrigger: {
-          trigger: aspirationLayout,
-          start: "top 80%",
-          toggleActions: "play none none none"
-        },
-        x: 60,
-        opacity: 0,
-        duration: 1,
-        delay: 0.15,
-        ease: "power3.out"
-      });
-    }
   }
 
   const footerTitle = document.querySelector(".footer-title");
   if (footerTitle) {
     gsap.from(footerTitle, {
-      scrollTrigger: {
-        trigger: footerTitle,
-        start: "top 90%",
-        toggleActions: "play none none none"
-      },
-      y: 80,
-      opacity: 0,
-      duration: 1.2,
-      ease: "power3.out"
+      scrollTrigger: { trigger: footerTitle, start: "top 90%", toggleActions: "play none none none" },
+      y: 80, opacity: 0, duration: 1.2, ease: "power3.out"
     });
   }
 })();
@@ -356,51 +332,29 @@
 
   if (heroContent) {
     gsap.to(heroContent, {
-      scrollTrigger: {
-        trigger: hero,
-        start: "top top",
-        end: "bottom top",
-        scrub: 1
-      },
-      y: 150,
-      opacity: 0,
-      ease: "none"
+      scrollTrigger: { trigger: hero, start: "top top", end: "bottom top", scrub: 1 },
+      y: 150, opacity: 0, ease: "none"
     });
   }
 
   if (heroCrest) {
     gsap.to(heroCrest, {
-      scrollTrigger: {
-        trigger: hero,
-        start: "top top",
-        end: "bottom top",
-        scrub: 1
-      },
-      y: 100,
-      scale: 1.1,
-      ease: "none"
+      scrollTrigger: { trigger: hero, start: "top top", end: "bottom top", scrub: 1 },
+      y: 100, scale: 1.1, ease: "none"
     });
   }
 
   if (heroScrollHint) {
     gsap.to(heroScrollHint, {
-      scrollTrigger: {
-        trigger: hero,
-        start: "top top",
-        end: "30% top",
-        scrub: 1
-      },
-      opacity: 0,
-      y: 30,
-      ease: "none"
+      scrollTrigger: { trigger: hero, start: "top top", end: "30% top", scrub: 1 },
+      opacity: 0, y: 30, ease: "none"
     });
   }
 })();
 
 
 /* ============================================
-   MARQUEE — Dynamic Speed (Fix timeScale bug)
-   Pakai animasi CSS native via animationDuration
+   MARQUEE DYNAMIC SPEED
 ============================================ */
 (function initMarqueeSpeed() {
   if (typeof ScrollTrigger === "undefined") return;
@@ -415,9 +369,9 @@
     start: "top bottom",
     end: "bottom top",
     onUpdate: (self) => {
-      const v = self.getVelocity() / 800;
-      const targetSpeed = 1 + Math.min(Math.abs(v), 3);
-      currentSpeed += (targetSpeed - currentSpeed) * 0.15;
+      const v = self.getVelocity() / 4000;
+      const targetSpeed = 1 + Math.min(Math.abs(v), 1.5);
+      currentSpeed += (targetSpeed - currentSpeed) * 0.1;
       marqueeTrack.style.animationDuration = (40 / currentSpeed) + "s";
     }
   });
