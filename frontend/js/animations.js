@@ -20,8 +20,8 @@
         document.body.style.overflow = "auto";
       }, 400);
     }
-    countEl.textContent = count;
-    barEl.style.width = count + "%";
+    if (countEl) countEl.textContent = count;
+    if (barEl) barEl.style.width = count + "%";
   }, 80);
 })();
 
@@ -129,9 +129,12 @@
 
 
 /* ============================================
-   PARALLAX HERO (Native)
+   PARALLAX HERO (Native — fallback)
 ============================================ */
 (function initParallax() {
+  // Skip kalau GSAP aktif
+  if (typeof gsap !== "undefined") return;
+
   const crest = document.querySelector(".hero-crest");
   const title = document.querySelector(".hero-title");
 
@@ -360,7 +363,6 @@
         scrub: 1
       },
       y: 100,
-      rotate: 30,
       scale: 1.1,
       ease: "none"
     });
@@ -383,9 +385,10 @@
 
 
 /* ============================================
-   MARQUEE VELOCITY (via animationDuration)
+   MARQUEE — Dynamic Speed (Fix timeScale bug)
+   Pakai animasi CSS native via animationDuration
 ============================================ */
-(function initMarqueeVelocity() {
+(function initMarqueeSpeed() {
   if (typeof ScrollTrigger === "undefined") return;
 
   const marqueeTrack = document.querySelector(".marquee-track");
@@ -398,8 +401,8 @@
     start: "top bottom",
     end: "bottom top",
     onUpdate: (self) => {
-      const velocity = Math.min(Math.abs(self.getVelocity()) / 800, 3);
-      const targetSpeed = 1 + velocity;
+      const v = self.getVelocity() / 800;
+      const targetSpeed = 1 + Math.min(Math.abs(v), 3);
       currentSpeed += (targetSpeed - currentSpeed) * 0.15;
       marqueeTrack.style.animationDuration = (40 / currentSpeed) + "s";
     }
