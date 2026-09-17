@@ -13,11 +13,11 @@
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/animations.css">
 
-  <!-- Lenis CSS -->
-  <link rel="stylesheet" href="https://unpkg.com/lenis@1.0.42/dist/lenis.css">
+  <!-- Lenis CSS (via jsdelivr) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lenis@1.0.42/dist/lenis.css">
 
-  <!-- Lenis JS (HARUS di atas GSAP) -->
-  <script src="https://unpkg.com/lenis@1.0.42/dist/lenis.min.js"></script>
+  <!-- Lenis JS (via jsdelivr, HARUS sebelum GSAP) -->
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.0.42/dist/lenis.min.js"></script>
 
   <!-- GSAP + ScrollTrigger -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
@@ -295,16 +295,7 @@
     </div>
   </div>
 
-  <!-- ============================================
-       SCRIPTS
-       Urutan WAJIB:
-       1. api.js         (untuk fetch)
-       2. programs.js    (render program)
-       3. aspirations.js (form aspirasi)
-       4. smooth-scroll.js (Lenis init)
-       5. cursor.js      (custom cursor)
-       6. animations.js  (loader, reveal, dll — butuh GSAP)
-  ============================================ -->
+  <!-- SCRIPTS (urutan WAJIB) -->
   <script src="js/api.js"></script>
   <script src="js/programs.js"></script>
   <script src="js/aspirations.js"></script>
@@ -313,14 +304,21 @@
   <script src="js/animations.js"></script>
 
   <script>
-    // Fade-in saat halaman pertama load
-    (function () {
+    document.addEventListener("DOMContentLoaded", () => {
+      // ✅ INI YANG HILANG — panggil renderPrograms()
+      if (typeof renderPrograms === "function") {
+        renderPrograms();
+      } else {
+        console.error("renderPrograms tidak ditemukan! Cek programs.js");
+      }
+
+      // Fade-in saat halaman pertama load
       document.body.style.opacity = "0";
       document.body.style.transition = "opacity 0.5s ease";
       setTimeout(() => {
         document.body.style.opacity = "1";
       }, 100);
-    })();
+    });
   </script>
 
 </body>
