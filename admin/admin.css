@@ -1189,3 +1189,45 @@ input, textarea, select { font-family: inherit; }
 .logo-text small {
   font-size: 11px !important;
 }
+
+/* ============================================
+   LOGO SIZE ADMIN — SUPER BESAR
+============================================ */
+
+/* Admin loader */
+.admin-loader-logo {
+  width: 160px !important;
+  height: 160px !important;
+  object-fit: contain;
+  margin-bottom: 48px;
+  border-radius: 50%;
+}
+
+/* Login screen logo */
+.login-logo-img {
+  width: 140px !important;
+  height: 140px !important;
+  object-fit: contain;
+  margin-bottom: 64px;
+  border-radius: 50%;
+  filter: drop-shadow(0 20px 60px rgba(0, 0, 0, 0.25));
+}
+
+/* Navbar admin */
+.logo-mark-img {
+  width: 72px !important;
+  height: 72px !important;
+  object-fit: contain;
+}
+
+.dash-nav-left {
+  gap: 16px !important;
+}
+
+.logo-text strong {
+  font-size: 18px !important;
+}
+
+.logo-text small {
+  font-size: 12px !important;
+}

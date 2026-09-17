@@ -1135,3 +1135,38 @@ input, textarea, select { font-family: inherit; }
 .logo-text small {
   font-size: 11px !important;
 }
+
+/* ============================================
+   LOGO SIZE — SUPER BESAR
+============================================ */
+
+/* Navbar logo */
+.logo-mark-img {
+  width: 72px !important;
+  height: 72px !important;
+  object-fit: contain;
+  border-radius: 50%;
+}
+
+.nav-logo {
+  gap: 16px !important;
+}
+
+.logo-text strong {
+  font-size: 18px !important;
+}
+
+.logo-text small {
+  font-size: 12px !important;
+}
+
+/* Hero crest */
+.hero-crest-img {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 560px !important;
+  max-height: 560px !important;
+  object-fit: contain;
+  animation: crestRotate 40s linear infinite;
+  filter: drop-shadow(0 0 60px rgba(37, 99, 235, 0.35));
+}

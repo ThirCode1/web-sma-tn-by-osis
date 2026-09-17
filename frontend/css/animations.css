@@ -294,3 +294,20 @@ html.lenis, html.lenis body { height: auto; }
   border-radius: 50%;
   filter: drop-shadow(0 20px 60px rgba(37, 99, 235, 0.35));
 }
+
+/* ============================================
+   LOADER LOGO — SUPER BESAR
+============================================ */
+.loader-logo-img {
+  width: 180px !important;
+  height: 180px !important;
+  object-fit: contain;
+  margin-bottom: 48px;
+  border-radius: 50%;
+  filter: drop-shadow(0 20px 60px rgba(37, 99, 235, 0.4));
+}
+
+.loader-inner small {
+  font-size: 12px;
+  letter-spacing: 0.35em;
+}
