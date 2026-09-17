@@ -4,7 +4,7 @@
 const API_URL =
   "https://script.google.com/macros/s/AKfycbz8F0avGv_Os_4X1B0naxm_NGmOLXogQv7IDTBR4pnNreB_DaU0PE93T_APfkjQ79oDGg/exec";
 
-const API_TIMEOUT_MS = 15000;
+const API_TIMEOUT_MS = 20000;
 
 
 /* ============================================
@@ -12,11 +12,11 @@ const API_TIMEOUT_MS = 15000;
 ============================================ */
 let _aspirationsCache = null;
 let _aspirationsCacheTime = 0;
-const CACHE_TTL_MS = 60 * 1000; // 1 menit
+const CACHE_TTL_MS = 60 * 1000;
 
 
 /* ============================================
-   HELPER: Fetch wrapper with timeout
+   FETCH WRAPPER
 ============================================ */
 async function apiFetch(params) {
   const queryString = new URLSearchParams(params).toString();
@@ -26,7 +26,12 @@ async function apiFetch(params) {
   const timeoutId = setTimeout(() => controller.abort(), API_TIMEOUT_MS);
 
   try {
-    const response = await fetch(url, { signal: controller.signal });
+    const response = await fetch(url, {
+      method: "GET",
+      redirect: "follow",
+      cache: "no-cache",
+      signal: controller.signal
+    });
     clearTimeout(timeoutId);
 
     if (!response.ok) {
@@ -34,6 +39,7 @@ async function apiFetch(params) {
     }
 
     return await response.json();
+
   } catch (error) {
     clearTimeout(timeoutId);
     if (error.name === "AbortError") {
@@ -50,13 +56,8 @@ async function apiFetch(params) {
 async function getPrograms() {
   try {
     const result = await apiFetch({ action: "programs" });
-
-    if (!result.success) {
-      throw new Error(result.message || "API gagal");
-    }
-
+    if (!result.success) throw new Error(result.message || "API gagal");
     return result.data || [];
-
   } catch (error) {
     console.error("[api] getPrograms error:", error);
     return [];
@@ -70,13 +71,8 @@ async function getPrograms() {
 async function getNews() {
   try {
     const result = await apiFetch({ action: "news" });
-
-    if (!result.success) {
-      throw new Error(result.message || "API gagal");
-    }
-
+    if (!result.success) throw new Error(result.message || "API gagal");
     return result.data || [];
-
   } catch (error) {
     console.error("[api] getNews error:", error);
     return [];
@@ -85,41 +81,26 @@ async function getNews() {
 
 
 /* ============================================
-   GET ASPIRATIONS (dengan cache)
+   GET ASPIRATIONS (cache)
 ============================================ */
 async function getAspirations(forceRefresh = false) {
   const now = Date.now();
 
-  // Return dari cache jika masih fresh
-  if (
-    !forceRefresh &&
-    _aspirationsCache &&
-    now - _aspirationsCacheTime < CACHE_TTL_MS
-  ) {
+  if (!forceRefresh && _aspirationsCache && now - _aspirationsCacheTime < CACHE_TTL_MS) {
     return _aspirationsCache;
   }
 
   try {
     const result = await apiFetch({ action: "aspirations" });
-
-    if (!result.success) {
-      throw new Error(result.message || "API gagal");
-    }
+    if (!result.success) throw new Error(result.message || "API gagal");
 
     _aspirationsCache = result.data || [];
     _aspirationsCacheTime = now;
-
     return _aspirationsCache;
 
   } catch (error) {
     console.error("[api] getAspirations error:", error);
-
-    // Fallback: return cache lama kalau ada
-    if (_aspirationsCache) {
-      console.warn("[api] Menggunakan cache lama karena request gagal.");
-      return _aspirationsCache;
-    }
-
+    if (_aspirationsCache) return _aspirationsCache;
     return [];
   }
 }
@@ -127,7 +108,6 @@ async function getAspirations(forceRefresh = false) {
 
 /* ============================================
    INVALIDATE CACHE
-   (panggil setelah update/create)
 ============================================ */
 function invalidateAspirationsCache() {
   _aspirationsCache = null;
@@ -142,7 +122,6 @@ async function getAspirationById(id) {
   try {
     const all = await getAspirations();
     return all.find(a => a.ID === id) || null;
-
   } catch (error) {
     console.error("[api] getAspirationById error:", error);
     return null;
@@ -162,25 +141,14 @@ async function postAspiration(payload) {
       class: payload.class || ""
     });
 
-    if (!result.success) {
-      throw new Error(result.message || "Gagal mengirim aspirasi");
-    }
+    if (!result.success) throw new Error(result.message || "Gagal mengirim aspirasi");
 
-    // Invalidasi cache karena ada data baru
     invalidateAspirationsCache();
 
-    return {
-      success: true,
-      message: "Aspirasi berhasil dikirim!",
-      id: result.id
-    };
-
+    return { success: true, message: "Aspirasi berhasil dikirim!", id: result.id };
   } catch (error) {
     console.error("[api] postAspiration error:", error);
-    return {
-      success: false,
-      message: "Gagal mengirim: " + error.message
-    };
+    return { success: false, message: "Gagal mengirim: " + error.message };
   }
 }
 
@@ -198,20 +166,12 @@ async function updateAspiration(payload) {
       response: payload.response || ""
     });
 
-    if (!result.success) {
-      throw new Error(result.message || "Gagal update aspirasi");
-    }
+    if (!result.success) throw new Error(result.message || "Gagal update aspirasi");
 
-    // Invalidasi cache karena data berubah
     invalidateAspirationsCache();
-
     return { success: true };
-
   } catch (error) {
     console.error("[api] updateAspiration error:", error);
-    return {
-      success: false,
-      message: "Gagal update: " + error.message
-    };
+    return { success: false, message: "Gagal update: " + error.message };
   }
 }

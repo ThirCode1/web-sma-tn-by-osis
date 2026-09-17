@@ -13,10 +13,10 @@
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/animations.css">
 
-  <!-- Lenis CSS (via jsdelivr) -->
+  <!-- Lenis CSS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lenis@1.0.42/dist/lenis.css">
 
-  <!-- Lenis JS (via jsdelivr, HARUS sebelum GSAP) -->
+  <!-- Lenis JS (HARUS sebelum GSAP) -->
   <script src="https://cdn.jsdelivr.net/npm/lenis@1.0.42/dist/lenis.min.js"></script>
 
   <!-- GSAP + ScrollTrigger -->
@@ -187,7 +187,7 @@
     </div>
 
     <div class="aspiration-layout">
-      <div class="aspiration-info reveal-up">
+      <div class="aspiration-info">
         <div class="info-item">
           <div class="info-num">01</div>
           <div>
@@ -211,7 +211,7 @@
         </div>
       </div>
 
-      <form id="aspirationForm" class="aspiration-form reveal-up">
+      <form id="aspirationForm" class="aspiration-form">
         <div class="form-group">
           <label for="aspirationCategory">Kategori</label>
           <select id="aspirationCategory" required>
@@ -305,7 +305,7 @@
 
   <script>
     document.addEventListener("DOMContentLoaded", () => {
-      // ✅ INI YANG HILANG — panggil renderPrograms()
+      // Panggil renderPrograms() untuk load data program dari API
       if (typeof renderPrograms === "function") {
         renderPrograms();
       } else {
