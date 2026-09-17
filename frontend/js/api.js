@@ -4,7 +4,7 @@
 const API_URL =
   "https://script.google.com/macros/s/AKfycbz8F0avGv_Os_4X1B0naxm_NGmOLXogQv7IDTBR4pnNreB_DaU0PE93T_APfkjQ79oDGg/exec";
 
-const API_TIMEOUT_MS = 20000;
+const API_TIMEOUT_MS = 60000;
 
 
 /* ============================================
