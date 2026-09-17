@@ -2,10 +2,8 @@
    CUSTOM CURSOR
 ============================================ */
 (function initCursor() {
-  // Skip di mobile/touch
   if (window.matchMedia("(pointer: coarse)").matches) return;
 
-  // Buat elemen cursor kalau belum ada
   let dot = document.getElementById("cursorDot");
   let ring = document.getElementById("cursorRing");
 
@@ -23,21 +21,25 @@
     document.body.appendChild(ring);
   }
 
-  let mouseX = 0, mouseY = 0;
-  let ringX = 0, ringY = 0;
-  let dotX = 0, dotY = 0;
+  let mouseX = window.innerWidth / 2;
+  let mouseY = window.innerHeight / 2;
+  let ringX = mouseX, ringY = mouseY;
+  let dotX = mouseX, dotY = mouseY;
+  let initialized = false;
 
   document.addEventListener("mousemove", (e) => {
     mouseX = e.clientX;
     mouseY = e.clientY;
+    if (!initialized) {
+      ringX = dotX = mouseX;
+      ringY = dotY = mouseY;
+      initialized = true;
+    }
   });
 
   function animate() {
-    // Ring smooth follow
     ringX += (mouseX - ringX) * 0.12;
     ringY += (mouseY - ringY) * 0.12;
-
-    // Dot sedikit lebih cepat
     dotX += (mouseX - dotX) * 0.35;
     dotY += (mouseY - dotY) * 0.35;
 
@@ -48,19 +50,13 @@
   }
   animate();
 
-  // Deteksi hover pada elemen interaktif
   function attachHover(selector, mode) {
     document.querySelectorAll(selector).forEach(el => {
-      el.addEventListener("mouseenter", () => {
-        ring.dataset.mode = mode || "hover";
-      });
-      el.addEventListener("mouseleave", () => {
-        ring.dataset.mode = "";
-      });
+      el.addEventListener("mouseenter", () => ring.dataset.mode = mode || "link");
+      el.addEventListener("mouseleave", () => ring.dataset.mode = "");
     });
   }
 
-  // Attach ke berbagai elemen
   attachHover("a, button, .nav-link, .nav-admin-btn", "link");
   attachHover(".program-card", "view");
   attachHover(".filter-pill, .filter-btn", "click");

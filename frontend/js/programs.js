@@ -2,7 +2,6 @@
    STATE
 ========================================= */
 let allPrograms = [];
-let currentProgramFilter = "ALL";
 
 
 /* =========================================
@@ -20,7 +19,7 @@ async function renderPrograms() {
 
 
 /* =========================================
-   RENDER LIST (Filter result)
+   RENDER LIST
 ========================================= */
 function renderProgramList(programs) {
   const container = document.getElementById("programContainer");
@@ -83,12 +82,11 @@ function createProgramCard(program, index) {
    FILTER PILLS
 ========================================= */
 function initProgramFilter() {
-  const pills = document.querySelectorAll(".filter-pill, .filter-btn");
+  const pills = document.querySelectorAll(".filter-pill");
   if (!pills.length) return;
 
   pills.forEach((button) => {
     button.addEventListener("click", () => {
-      // Reset active state
       pills.forEach((b) => b.classList.remove("active"));
       button.classList.add("active");
 
@@ -112,14 +110,21 @@ function initProgramFilter() {
    MODAL — OPEN
 ========================================= */
 function openProgramModal(program) {
-  document.getElementById("modalCategory").textContent = program.CATEGORY || "-";
-  document.getElementById("modalTitle").textContent = program.NAME || "-";
-  document.getElementById("modalDescription").textContent = program.DESCRIPTION || "-";
-  document.getElementById("modalDate").textContent = program.DATE || "-";
-  document.getElementById("modalLocation").textContent = program.LOCATION || "-";
-  document.getElementById("modalStatus").textContent = program.STATUS || "-";
+  const cat = document.getElementById("modalCategory");
+  const title = document.getElementById("modalTitle");
+  const desc = document.getElementById("modalDescription");
+  const date = document.getElementById("modalDate");
+  const loc = document.getElementById("modalLocation");
+  const status = document.getElementById("modalStatus");
+  const modal = document.getElementById("programModal");
 
-  document.getElementById("programModal").classList.add("open");
+  if (cat) cat.textContent = program.CATEGORY || "-";
+  if (title) title.textContent = program.NAME || "-";
+  if (desc) desc.textContent = program.DESCRIPTION || "-";
+  if (date) date.textContent = program.DATE || "-";
+  if (loc) loc.textContent = program.LOCATION || "-";
+  if (status) status.textContent = program.STATUS || "-";
+  if (modal) modal.classList.add("open");
 }
 
 
@@ -127,32 +132,28 @@ function openProgramModal(program) {
    MODAL — CLOSE
 ========================================= */
 function closeProgramModal() {
-  document.getElementById("programModal").classList.remove("open");
+  const modal = document.getElementById("programModal");
+  if (modal) modal.classList.remove("open");
 }
 
 
 /* =========================================
-   INIT EVENTS (dipanggil dari DOMContentLoaded)
+   INIT
 ========================================= */
-function initProgramEvents() {
+document.addEventListener("DOMContentLoaded", () => {
+  // Init filter setelah DOM ready
+  initProgramFilter();
+
   // Close button
   const closeBtn = document.getElementById("closeModal");
   if (closeBtn) closeBtn.addEventListener("click", closeProgramModal);
 
-  // Click backdrop
-  const modalBackground = document.querySelector(".modal-background");
-  if (modalBackground) {
-    modalBackground.addEventListener("click", closeProgramModal);
-  }
+  // Backdrop click
+  const backdrop = document.querySelector(".modal-background");
+  if (backdrop) backdrop.addEventListener("click", closeProgramModal);
 
   // ESC key
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") closeProgramModal();
   });
-
-  // Init filter
-  initProgramFilter();
-}
-
-// Auto-init event setelah DOM siap
-document.addEventListener("DOMContentLoaded", initProgramEvents);
+});
