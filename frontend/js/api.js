@@ -130,28 +130,45 @@ async function getAspirationById(id) {
 
 
 /* ============================================
-   POST ASPIRATION
+   POST ASPIRATION (Fire & Forget)
+   Pakai POST no-cors biar nggak timeout
 ============================================ */
 async function postAspiration(payload) {
   try {
-    const result = await apiFetch({
-      action: "createAspiration",
-      category: payload.category || "",
-      message: payload.message || "",
-      class: payload.class || ""
+    // Kirim via POST form-urlencoded
+    const formData = new URLSearchParams();
+    formData.append("action", "createAspiration");
+    formData.append("category", payload.category || "");
+    formData.append("message", payload.message || "");
+    formData.append("class", payload.class || "");
+
+    // Fire & forget — nggak nunggu response
+    await fetch(API_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+      body: formData.toString()
     });
 
-    if (!result.success) throw new Error(result.message || "Gagal mengirim aspirasi");
-
+    // Karena no-cors, kita nggak bisa baca response.
+    // Anggap sukses kalau request terkirim.
     invalidateAspirationsCache();
 
-    return { success: true, message: "Aspirasi berhasil dikirim!", id: result.id };
+    return {
+      success: true,
+      message: "Aspirasi berhasil dikirim!"
+    };
+
   } catch (error) {
     console.error("[api] postAspiration error:", error);
-    return { success: false, message: "Gagal mengirim: " + error.message };
+    return {
+      success: false,
+      message: "Gagal mengirim: " + error.message
+    };
   }
 }
-
 
 /* ============================================
    UPDATE ASPIRATION
